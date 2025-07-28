@@ -39,7 +39,7 @@ This ETL (Extract, Transform, Load) audit pipeline provides:
 
 ## 🏗 Architecture
 
-![Batch ETL Quality Audit Pipeline Architecture](Batch ETL Quality Audit Pipeline with ZenML + SonarQube + Evidently AI.drawio.png)
+![Batch ETL Quality Audit Pipeline Architecture](arch.png)
 
 ## 📋 Prerequisites
 
