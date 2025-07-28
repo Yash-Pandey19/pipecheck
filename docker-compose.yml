@@ -1,0 +1,48 @@
+services:
+  sonarqube:
+    image: sonarqube:lts
+    container_name: sonarqube
+    ports:
+      - "9000:9000"
+    environment:
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+      - SONAR_JDBC_URL=jdbc:postgresql://postgres:5432/sonarqube
+      - SONAR_JDBC_USERNAME=sonarqube
+      - SONAR_JDBC_PASSWORD=sonarqube_password
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:12
+    container_name: sonar-postgres
+    environment:
+      POSTGRES_USER: sonarqube
+      POSTGRES_PASSWORD: sonarqube_password
+      POSTGRES_DB: sonarqube
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  sonar-scanner:
+    image: sonarsource/sonar-scanner-cli:latest
+    container_name: sonar_scanner
+    depends_on:
+      - sonarqube
+    volumes:
+      - .:/usr/src
+    working_dir: /usr/src
+    command: >
+      sonar-scanner
+      -Dsonar.projectKey=${PROJECT_KEY:-my-project}
+      -Dsonar.sources=./steps
+      -Dsonar.host.url=http://sonarqube:9000
+      -Dsonar.login=${SONAR_TOKEN}
+
+volumes:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
+  postgres_data:
